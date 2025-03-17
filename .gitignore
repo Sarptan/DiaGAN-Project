@@ -14,3 +14,9 @@ notebooks/.ipynb_checkpoints/
 
 # Ignore logs and outputs
 logs/
+
+# Ignore build artifacts from setup.py
+diagan_project/
+dist/
+build/
+*.egg-info/
