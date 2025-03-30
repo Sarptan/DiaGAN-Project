@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import torchvision.utils
 import numpy as np
+import torch
 
 
 def plot_batch_images(images, labels):
@@ -14,24 +15,31 @@ def plot_batch_images(images, labels):
     plt.show()
 
 
+import matplotlib.pyplot as plt
+import torchvision
+import numpy as np
+import torch
+
 def visualize_colored_mnist(dataloader, title="Colored MNIST Batch Samples"):
-    """
-    Visualizes a batch of Colored MNIST images using a grid layout.
+    images, labels = next(iter(dataloader))
 
-    Args:
-        dataloader (DataLoader): DataLoader containing Colored MNIST samples.
-        title (str): Title of the plot.
-    """
-    images, labels = next(iter(dataloader))  # Get a batch
+    # Convert from [-1, 1] to [0, 1]
+    images = (images + 1) / 2
+    images = torch.clamp(images, 0, 1)
+
     batch_size = images.shape[0]
-    nrow = int(np.sqrt(batch_size))  # Arrange images in a square grid
+    nrow = int(np.sqrt(batch_size))
 
-    # Create an image grid
-    grid_img = torchvision.utils.make_grid(images, nrow=nrow, normalize=True)
+    # Make grid without normalization (we already did it)
+    grid_img = torchvision.utils.make_grid(images, nrow=nrow, padding=2)
 
-    # Plot the image batch
-    plt.figure(figsize=(10, 10))
-    plt.imshow(grid_img.permute(1, 2, 0))  # Convert from (C, H, W) to (H, W, C)
+    # Convert to numpy and permute to (H, W, C)
+    np_grid = grid_img.permute(1, 2, 0).cpu().numpy()
+
+    # Plot with no interpolation and larger figsize
+    plt.figure(figsize=(8, 8))
+    plt.imshow(np_grid, interpolation='none')  # <- disables blending
     plt.axis("off")
     plt.title(title)
     plt.show()
+
